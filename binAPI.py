@@ -82,13 +82,16 @@ def report_profit(userName):
     profitDict = {}
     for coin in accInfo["balances"]:
         if coin["asset"] != "USDT":
+            boughtWith = "USDT"
             try:
                 orderBook = client.get_my_trades(symbol=coin["asset"]+"USDT")
             except:
                 try:
                     orderBook = client.get_my_trades(symbol=coin["asset"]+"BTC")
+                    boughtWith = "BTC"
                 except:
                     print("Unknown trade type")
+                    continue
             totalPrice = 0
             totalQty = 0
             avgPrice = 0
@@ -114,7 +117,7 @@ def report_profit(userName):
                 tradeDetail[coin["asset"]] = {}
                 tradeDetail[coin["asset"]]["avgPrice"] = totalPrice/totalQty
                 tradeDetail[coin["asset"]]["qty"] = totalQty
-                tradeDetail[coin["asset"]]["currentPrice"] = float(client.get_avg_price(symbol=coin["asset"]+"USDT")["price"])
+                tradeDetail[coin["asset"]]["currentPrice"] = float(client.get_avg_price(symbol=coin["asset"]+boughtWith)["price"])
                 tradeDetail[coin["asset"]]["perc"] = round(tradeDetail[coin["asset"]]["currentPrice"]/tradeDetail[coin["asset"]]["avgPrice"] - 1, 3)
     
     return tradeDetail, profitDict
