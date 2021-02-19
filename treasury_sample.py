@@ -1,3 +1,5 @@
+# Please edit this file accordingly and save it as treasury.py
+
 TREASURE =\
     {
         "e1746288#9221":
