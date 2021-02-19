@@ -124,3 +124,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+treasury.py
+treasure.py
