@@ -133,16 +133,22 @@ async def report_portfolio(ctx, *, checkALL="all"):
             await ctx.send(message)
     await ctx.send("Reporting completed!")
 
-@bot.command(name='report_coins', help='Reports the current status of the coins.')
-async def report_coins(ctx):
+@bot.command(name='report_coin_wallet', help='Reports the current status of the binance wallet.')
+async def report_coin_wallet(ctx):
     issuedBy = str(ctx.message.author)
-    coinStatus, profits = im.report_coins(issuedBy)
+    walletStatus = im.report_coin_wallet(issuedBy)
     message = issuedBy + "'s wallet status:"
     await ctx.send(message)
-    splittedFormat = split_dict(coinStatus, 5)
+    splittedFormat = split_dict(walletStatus, 5)
     for s in splittedFormat:
         message = pprint.pformat(s)
         await ctx.send(message)
+    await ctx.send("Reporting completed!")
+
+@bot.command(name='report_coin_profit', help='Reports the current status of the binance wallet.')
+async def report_coin_profit(ctx):
+    issuedBy = str(ctx.message.author)
+    profits = im.report_coin_profits(issuedBy)
     message = "Profit History:\n"
     await ctx.send(message)
     splittedFormat = split_dict(profits, 5)

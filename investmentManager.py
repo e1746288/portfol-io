@@ -86,5 +86,8 @@ def export_portfolio_alternative():
 def print_portfolio_update():
     return str(TREASURE)
 
-def report_coins(userName):
+def report_coin_wallet(userName):
+    return binAPI.report_wallet_status(userName.replace("#", "_"))
+    
+def report_coin_profits(userName):
     return binAPI.report_profit(userName.replace("#", "_"))
