@@ -58,4 +58,4 @@ def update_prices(source):
     fetch_fund()
     fetch_shares()
     fetch_coin()
-    im.update_treasure()
+    im.update_treasury()

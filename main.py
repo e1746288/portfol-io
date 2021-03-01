@@ -71,7 +71,7 @@ async def sell(ctx, amount:float, instrumentName:str, instrumentType:str):
             TREASURE[issuedBy][instrumentType][instrumentName] = oldAmount
             await ctx.send(message)
         message = "({0}) {1} balance goes from {2} to {3}".format(issuedBy, instrumentName, oldAmount, str(TREASURE[issuedBy][instrumentName]))
-        im.update_treasure()
+        im.update_treasury()
         await ctx.send(message)
     except:
         message = "Could not sell something that you do not own!"
@@ -98,7 +98,7 @@ async def buy(ctx, amount:float, instrumentName:str, instrumentType:str):
         TREASURE[issuedBy][instrumentType][instrumentName] = amount
 
     message = "({0}) {1} balance goes from {2} to {3}".format(issuedBy, instrumentName, oldAmount, str(TREASURE[issuedBy][instrumentName]))
-    im.update_treasure()
+    im.update_treasury()
     await ctx.send(message)
 
 @bot.command(name='export_portfolio', help='Export current status of the portfolio.')
@@ -114,29 +114,16 @@ async def export_portfolio(ctx, *, checkALL="all"):
 
 @bot.command(name='report_portfolio', help='Report and print the current status of the treasury.')
 async def report_portfolio(ctx, *, checkALL="all"):
-    if checkALL == "all":
-        message = "The Mighty Treasure:"
-        await ctx.send(message)
-        for person in list(TREASURE.keys()):
-            await ctx.send("\t" + person)
-            for asset in list(TREASURE[person].keys()):
-                await ctx.send("\t\t" + asset)
-                message = pprint.pformat(TREASURE[person][asset])
-                await ctx.send(message)
-    else:
-        issuedBy = str(ctx.message.author)
-        message = issuedBy + "'s secret treasure:\n"
-        await ctx.send(message)
-        for asset in list(TREASURE[issuedBy].keys()):
-            await ctx.send("\t\t" + asset)
-            message = pprint.pformat(TREASURE[issuedBy][asset])
-            await ctx.send(message)
+    message = "The Mighty Treasure:"
+    await ctx.send(message)
+    message = pprint.pformat(im.report_portfolio(checkALL), sort_dicts=False)
+    await ctx.send(message)
     await ctx.send("Reporting completed!")
 
 @bot.command(name='report_coin_wallet', help='Reports the current status of the binance wallet.')
-async def report_coin_wallet(ctx):
+async def report_coin_wallet(ctx, *, currency="USDT"):
     issuedBy = str(ctx.message.author)
-    walletStatus = im.report_coin_wallet(issuedBy)
+    walletStatus = im.report_coin_wallet(issuedBy, currency)
     message = issuedBy + "'s wallet status:"
     await ctx.send(message)
     splittedFormat = split_dict(walletStatus, 5)
