@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from binance.client import Client
 from binance.enums import *
+from datetime import datetime
 
 from treasury import TREASURE
 
@@ -107,7 +108,7 @@ def report_wallet_status(userName, mainCurrency):
                     for order in tempBook:
                         currencyUSDTInfo = client.get_klines(symbol=mainCurrency+currency, interval=KLINE_INTERVAL_1MINUTE, startTime=order["time"], limit = 1)[0]
                         usdtPrice = (float(currencyUSDTInfo[1]) + float(currencyUSDTInfo[4])) * 0.5
-                        order["price"] = float(order["price"]) / usdtPrice                    
+                        order["price"] = float(order["price"]) / usdtPrice          
                 elif currency != mainCurrency:
                     for order in tempBook:
                         currencyUSDTInfo = client.get_klines(symbol=currency+mainCurrency, interval=KLINE_INTERVAL_1MINUTE, startTime=order["time"], limit = 1)[0]
@@ -118,10 +119,12 @@ def report_wallet_status(userName, mainCurrency):
             totalPrice = 0
             totalQty = 0
             avgPrice = 0
+            tradeDetail[coin["asset"]] = {}
             for order in orderBook:
                 if order["isBuyer"]:
                     totalPrice += float(order["price"]) * float(order["qty"])
                     totalQty += float(order["qty"])
+                    tradeDetail[coin["asset"]]["lastBuyOrderDate"] = datetime.utcfromtimestamp(int(order["time"]/1000)).strftime('%d/%m/%Y')
                 else:
                     avgPrice = totalPrice/totalQty
                     totalQty -= float(order["qty"])
@@ -130,9 +133,8 @@ def report_wallet_status(userName, mainCurrency):
             if totalQty == 0:
             	continue
             
-            tradeDetail[coin["asset"]] = {}
             tradeDetail[coin["asset"]]["avgPrice"] = round(totalPrice/totalQty, 5)
-            tradeDetail[coin["asset"]]["qty"] = totalQty
+            tradeDetail[coin["asset"]]["qty"] = float(coin["free"]) + float(coin["locked"])
             try:
                 tradeDetail[coin["asset"]]["currentPrice"] = round(float(client.get_avg_price(symbol=coin["asset"]+"USDT")["price"]), 5)
             except:

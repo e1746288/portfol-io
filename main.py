@@ -5,6 +5,7 @@ import os
 import random
 import pprint
 import itertools
+import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
@@ -104,11 +105,13 @@ async def buy(ctx, amount:float, instrumentName:str, instrumentType:str):
 @bot.command(name='export_portfolio', help='Export current status of the portfolio.')
 async def export_portfolio(ctx, *, checkALL="all"):
     if checkALL == "all":
-        im.export_portfolio("all")
+        fName = im.export_portfolio("all")
+        await ctx.send(file=discord.File(fName))
         message = "Total portfolio is exported"
     else:
         issuedBy = str(ctx.message.author)
-        im.export_portfolio(issuedBy)
+        fName = im.export_portfolio(issuedBy)
+        await ctx.send(file=discord.File(fName))
         message = issuedBy + "'s portfolio is exported."
     await ctx.send(message)
 
@@ -133,9 +136,9 @@ async def report_coin_wallet(ctx, *, currency="USDT"):
     await ctx.send("Reporting completed!")
 
 @bot.command(name='report_coin_profit', help='Reports the current status of the binance wallet.')
-async def report_coin_profit(ctx):
+async def report_coin_profit(ctx, *, currency="USDT"):
     issuedBy = str(ctx.message.author)
-    profits = im.report_coin_profits(issuedBy)
+    profits = im.report_coin_profits(issuedBy, currency)
     message = "Profit History:\n"
     await ctx.send(message)
     splittedFormat = split_dict(profits, 5)

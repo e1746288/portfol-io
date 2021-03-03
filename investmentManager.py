@@ -64,6 +64,7 @@ def export_portfolio(issuedBy="all"):
                 w.writerow(theRow)
         theRow = [" "] * 9 + ["Genel Toplam:", grandTotalTRY, grandTotalTRYAvg]
         w.writerow(theRow)
+    return fileName
 
 def export_portfolio_alternative():
     csvColumns = [" "]
@@ -137,5 +138,5 @@ def print_portfolio_update():
 def report_coin_wallet(userName, currency):
     return binAPI.report_wallet_status(userName.replace("#", "_"), currency)
     
-def report_coin_profits(userName):
-    return binAPI.report_profit(userName.replace("#", "_"))
+def report_coin_profits(userName, currency):
+    return binAPI.report_profit(userName.replace("#", "_"), currency)
